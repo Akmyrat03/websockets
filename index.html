@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    #message {
+      width: 80%;
+      padding: 10px;
+    }
+    #send {
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Simple Chat Application</h1>
+  <div id="chat"></div>
+  <input type="text" id="message" placeholder="Type a message...">
+  <button id="send">Send</button>
+
+  <script>
+    const chatDiv = document.getElementById("chat");
+    const messageInput = document.getElementById("message");
+    const sendButton = document.getElementById("send");
+
+    // Connect to WebSocket server
+    const ws = new WebSocket("ws://" + window.location.host + "/ws");
+
+    // Display messages in the chat
+    ws.onmessage = function (event) {
+      const message = document.createElement("div");
+      message.textContent = event.data;
+      chatDiv.appendChild(message);
+    };
+
+    // Send message when button is clicked
+    sendButton.onclick = function () {
+      const message = messageInput.value;
+      ws.send(message);
+      const sentMessage = document.createElement("div");
+      sentMessage.textContent = "You: " + message;
+      chatDiv.appendChild(sentMessage);
+      messageInput.value = "";
+    };
+  </script>
+</body>
+</html>
